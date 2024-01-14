@@ -1,0 +1,76 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Rarity Grinder", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local MainTab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local PetsTab = Window:MakeTab({
+    Name = "Pets",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local isRunning = false
+
+local selectedCrate = "Basic Crate"
+
+MainTab:AddToggle({
+    Name = "Roll",
+    Default = false,
+    Callback = function(Value)
+        isRunning = Value
+        print(Value)
+        while isRunning do
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Open_S"):FireServer()
+            wait(1)
+        end
+    end    
+})
+
+MainTab:AddButton({
+    Name = "Purchase Upgrade (Luck)",
+    Callback = function()
+        local args = {
+            [1] = "Luck",
+            [2] = "RNG",
+            [3] = 1
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Shop"):WaitForChild("PurchaseUpgrade"):FireServer(unpack(args))
+    end
+})
+
+MainTab:AddButton({
+    Name = "Purchase Upgrade (Open Speed)",
+    Callback = function()
+        local args = {
+            [1] = "OpenSpeed",
+            [2] = "RNG",
+            [3] = 1
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Shop"):WaitForChild("PurchaseUpgrade"):FireServer(unpack(args))
+    end
+})
+
+local crateDropdown = PetsTab:AddDropdown({
+    Name = "Select Crate",
+    Options = {"Emerald Crate", "Royal Crate", "Dev Crate", "Golden Crate", "Rebirth Crate", "Diamond Crate", "Silver Crate", "Basic Crate"},
+    Default = selectedCrate,
+    Callback = function(Value)
+        selectedCrate = Value
+    end
+})
+
+PetsTab:AddButton({
+    Name = "Open Crate",
+    Callback = function()
+        local args = {
+            [1] = selectedCrate,
+            [2] = 1
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Open_Crate"):FireServer(unpack(args))
+    end
+})
